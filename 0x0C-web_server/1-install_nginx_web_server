@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
-# Install the web server 'nginx' on the server
-sudo apt-get update -y
-sudo apt-get upgrade -y
+# Configures a new ubuntu machine by installing
+# Nginx where it should be listening on port 80
+# Serve a page that would return a Hello World string
+sudo apt-get  update -y
 sudo apt-get install nginx -y
+
+# allowing nginx on firewall
 ufw allow 'Nginx HTTP'
-echo "Hello World!" > /var/www/html/index.html
+
+# Creating new index
+echo "Hello World!" > /var/www/html/index.nginx-debian.html
+
+# Starting nginx
 sudo service nginx start
