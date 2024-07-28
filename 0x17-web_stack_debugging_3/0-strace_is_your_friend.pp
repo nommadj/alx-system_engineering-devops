@@ -1,6 +1,8 @@
-# Fixes Apache 500 error
-
-exec { 'fix-wordpress':
-  command => 'sed -i s/phpp/php/g /var/www/html/wp-settings.php',
-  path    => '/usr/local/bin/:/bin/'
+# Fix bad file ext .phpp
+file { '/var/www/html/wp-settings.php':
+  ensure  => present
+}
+-> exec { 'replace':
+  command => "sed -i 's/.phpp/.php/' /var/www/html/wp-settings.php",
+  path    => '/bin'
 }

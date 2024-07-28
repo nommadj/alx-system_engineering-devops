@@ -1,18 +1,38 @@
 #!/usr/bin/python3
-"""Exports to-do list information of all employees to JSON format."""
+"""For a given employee ID, returns TODO list info as JSON format"""
+import collections
+import csv
 import json
 import requests
+import sys
 
-if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com/"
-    users = requests.get(url + "users").json()
+if len(sys.argv) != 1:
+    exit(1)
 
-    with open("todo_all_employees.json", "w") as jsonfile:
-        json.dump({
-            u.get("id"): [{
-                "task": t.get("title"),
-                "completed": t.get("completed"),
-                "username": u.get("username")
-            } for t in requests.get(url + "todos",
-                                    params={"userId": u.get("id")}).json()]
-            for u in users}, jsonfile)
+url = 'https://jsonplaceholder.typicode.com/'
+
+urlUser = url + 'users/'
+urlTodos = url + 'todos/'
+
+users = requests.get(urlUser).json()
+todos = requests.get(urlTodos).json()
+
+if (len(users) == 0):
+    exit(1)
+
+data = collections.OrderedDict()
+values = []
+
+for user in users:
+    username = user.get("username")
+    for todo in todos:
+        t = collections.OrderedDict()
+        t["username"] = username
+        t["task"] = todo.get("title")
+        t["completed"] = todo.get("completed")
+        values.append(t)
+        data["1"] = values
+
+filename = "todo_all_employees.json"
+with open(filename, "w") as fp:
+    fp.write(json.dumps(data))

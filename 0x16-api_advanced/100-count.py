@@ -1,43 +1,38 @@
 #!/usr/bin/python3
-"""Contains the count_words function"""
+"""100-count.py - Query Reddit API & count unique words
+in titles of hot articles using recursion"""
+import json
 import requests
 
 
-def count_words(subreddit, word_list, found_list=[], after=None):
-    '''Prints counts of given words found in hot posts of a given subreddit.
+def count_words(subreddit, word_list, params={}):
+    """Sort hot subreddit article titles using recursion"""
+    d = {k: 0 for k in word_list}
+    nWords = len(d)
+    payload = {}
 
-    Args:
-        subreddit (str): The subreddit to search.
-        word_list (list): The list of words to search for in post titles.
-        found_list (obj): Key/value pairs of words/counts.
-        after (str): The parameter for the next page of the API results.
-    '''
-    user_agent = {'User-agent': 'test45'}
-    posts = requests.get('http://www.reddit.com/r/{}/hot.json?after={}'
-                         .format(subreddit, after), headers=user_agent)
-    if after is None:
-        word_list = [word.lower() for word in word_list]
+    baseURL = "https://www.reddit.com/r/"
+    url = baseURL + subreddit + "/hot/.json?limit=100"
 
-    if posts.status_code == 200:
-        posts = posts.json()['data']
-        aft = posts['after']
-        posts = posts['children']
-        for post in posts:
-            title = post['data']['title'].lower()
-            for word in title.split(' '):
-                if word in word_list:
-                    found_list.append(word)
-        if aft is not None:
-            count_words(subreddit, word_list, found_list, aft)
+    headers = {
+        'User-Agent': 'My User Agent 1.0',
+        'From': '214 at Holberton'
+    }
+    result = requests.get(url, headers=headers, params=params)
+    title = []
+    if result.status_code == 200:
+
+        result = result.json()
+        children = result.get('data').get('children')
+        for i in range(len(children)):
+            t = children[i].get('data').get('title').split()
+        print("title:{}".format(t))
+        after = result.get('data').get('after')
+        if after is None:
+            return None
         else:
-            result = {}
-            for word in found_list:
-                if word.lower() in result.keys():
-                    result[word.lower()] += 1
-                else:
-                    result[word.lower()] = 1
-            for key, value in sorted(result.items(), key=lambda item: item[1],
-                                     reverse=True):
-                print('{}: {}'.format(key, value))
+            payload = {"after": after, "d": d}
+            count_words(subreddit, word_list, payload)
+            return None
     else:
-        return
+        return None

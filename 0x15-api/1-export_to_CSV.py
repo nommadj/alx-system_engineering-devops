@@ -1,18 +1,32 @@
 #!/usr/bin/python3
-"""Exports to-do list information for a given employee ID to CSV format."""
-import csv
-import requests
-import sys
-
+"""For a given employee ID, returns TODO list info as CSV format"""
 if __name__ == "__main__":
-    user_id = sys.argv[1]
-    url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(url + "users/{}".format(user_id)).json()
-    username = user.get("username")
-    todos = requests.get(url + "todos", params={"userId": user_id}).json()
+    """ __main__ """
 
-    with open("{}.csv".format(user_id), "w", newline="") as csvfile:
-        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        [writer.writerow(
-            [user_id, username, t.get("completed"), t.get("title")]
-        ) for t in todos]
+    import csv
+    import sys
+    import requests
+
+    if len(sys.argv) != 2:
+        exit(1)
+
+    url = 'https://jsonplaceholder.typicode.com/'
+    empID = sys.argv[1]
+
+    urlUser = url + 'users/' + empID
+    urlTodos = url + 'todos?userId=' + empID
+
+    user = requests.get(urlUser).json()
+    todos = requests.get(urlTodos).json()
+
+    if (len(user) == 0):
+        exit(1)
+
+    username = user.get("username")
+
+    fp = empID + ".csv"
+    with open(fp, "w") as csvFile:
+        csvWriter = csv.writer(csvFile, quoting=csv.QUOTE_ALL)
+        for todo in todos:
+            csvWriter.writerow(
+                [empID, username, todo.get("completed"), todo.get("title")])

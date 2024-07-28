@@ -1,158 +1,78 @@
-0x19. Postmortem
-================
+Post-Mortem
+Sumo Logic Installation on Web Server
+1/23/18
 
-- By Dev Nderitu
-- Weight: 1
+UPDATE OF SUMO LOGIC INSTALLATION PROJECT:
+The app won. As we're closing on the project deadline, no further progress can be made tonight. In the immortal words of Scarlett O'Hara, "Tomorrow is another day."
 
-Concepts
---------
+GOAL: Install the Sumo Logic application on my webserver per 0x18. Webstack monitoring
+OUTAGE: 14 hrs and going starting from 10:00 am earlier today. Got Mandatory working but not the Advanced
+IMPACT: This affects only one user (me). The web server, masquerading as 214-web-01, is not serving any critical content. The world remains safe.
+ROOT CAUSE: Gremlins. I caught a glance of something like this,
+http://ksassets.timeincuk.net/wp/uploads/sites/55/2017/08/2015Gremlins_GettyImages-163067748261115-920x610-920x584.jpg
 
-*For this project, students are expected to look at this concept:*
+TIMELINE (aka Felicia's Irish Lament):
+10:00 am: Arrived on-site and exchanged a few pleasantries with colleagues.
+10:30 am: Found out the iMac was imaged to Apple's High Sierra OS. Uh-oh. Vagrant was gone. Not a trace, even though Vagrant & programs were installed the day before. Have installed Vagrant ~20 times in last 8 months. Call me Ms. Vagrant. Reinstalled vagrant & programs again (~15). Installed my .ssh keys again.
 
-- [On-call](https://alx-intranet.hbtn.io/concepts/39)
+11:00 am: Noticed the new screensaver locks the screen at ~1 minute vs yesterday, which had a longer wait time. Discovered I can’t change the sleep timer anymore. Kiren and I let I.T. know.
 
-Background Context
-------------------
+11:10 am: Signed up for the Sumo Logic Free Trial with my 214@ email as required. Started installing Sumo Logic onto my Virtual Machine, web01. In the middle of the install, I walked away to attend Stand-up.
 
-[![](https://s3.amazonaws.com/intranet-projects-files/holbertonschool-sysadmin_devops/294/tWUPWmR.png)](https://youtu.be/rp5cVMNmbro)[](http://savefrom.net/?url=https%3A%2F%2Fyoutu.be%2Frp5cVMNmbro&utm_source=userjs-chrome&utm_medium=extensions&utm_campaign=link_modifier "Obtenir un lien direct")
+11:30 am: Stand-up lasted 30 minutes.
 
-Any software system will eventually fail, and that failure can come stem from a wide range of possible factors: bugs, traffic spikes, security issues, hardware failures, natural disasters, human error... Failing is normal and failing is actually a great opportunity to learn and improve. Any great Software Engineer must learn from his/her mistakes to make sure that they won't happen again. Failing is fine, but failing twice because of the same issue is not.
+12:00 pm: Returned to my iMac to notice that terminals had an error message. Closed them. Sumologic wizard did not finish. The terminals logged out from inactivity/locked screen. [Insert swear words].
 
-A postmortem is a tool widely used in the tech industry. After any outage, the team(s) in charge of the system will write a summary that has 2 main goals:
+12:10 pm: Tried to sign up for the Sumo Logic Free Trial again with my 2nd holberton email. Got the spinning wheel of death. Decided against using this email because that’s not the requirement. However, did run the wget command, which might have erased the original access key.
+Contacted Alex, Sumo Logic Customer Support, via chat. Recommended logging out of Sumo Logic GUI. Lost ability to contact Customer Support. Tried to log back in. GUI asked me for a password, but one was never set. GUI was tricky. [Insert more swear words]
 
-- To provide the rest of the company's employees easy access to information detailing the cause of the outage. Often outages can have a huge impact on a company, so managers and executives have to understand what happened and how it will impact their work.
-- And to ensure that the root cause(s) of the outage has been discovered and that measures are taken to make sure it will be fixed.
+12:45 pm: Found email from Sumo Logic saying to Authorize App. Sumo Logic did not mentioned that the email was their primary key, and it must be acknowledged. Found both emails. Only clicked the button on the first email.
 
-Resources
----------
+1:00 pm - 1:45 pm: LUNCH because was I was faint with hunger. It was delicious. Thanks for asking.
 
-**Read or watch**:
+1:45 pm - 4:00 pm: Opened Sumo Logic Customer Support trouble ticket via email. Eventually, found Alex and started chatting again.
+-Enabled security flag so he could see my settings.
+-I discovered my Nginx wasn’t running. Asked for help on Slack. Advice was to run “nginx -t” and discovered a stray *.sql file in sites-enabled directory from some previous testing from weeks ago. Started Nginx up after the file was removed.
+-Curled Sumo Logic’s location. Status code=200. No problem with firewall.
+-Went through some basic troubleshooting with Alex. He can view my settings but not my screen. Why aren’t they using LogMeIn or similar tool? He’s able to see web01 data, but I can’t.
+-While working with Sumo Logic, I found at least 2 bugs their new GUI. You must refresh as occasionally status is not reflected. Also saw a blank screen when there should’ve been data.
+-To communicate better, I’m sending screenshots through chat.
+Alex discovered that my Time Zone was set to PST but should’ve been left as UTC. Setting the time zone correctly fixed 2 of the 4 panels in “Nginx - Overview”.
+-Also in the GUI, adding a “source” from the “Collection” is DIFFERENT from adding it from the “App Catalog>Library”. The panels are different.
+-I also tried installing Sumo Logic on my laptop. I saw the “Spinning Wheel of Death” and gave up after awhile.
+-Quick 20 min side meeting then went back to debugging with Alex.
+-Walked Kiren through the Sumo Logic installation in 10 minutes. Felt ridiculous at this point. Suspect infamous Gremlins that like to hover around my hardware.
+-Alex has tools that I cannot see, he shared his panel views for “Nginx - Overview”. This is the mandatory portion. My webserver is fine. Sumo Logic app is not.
 
-- [Incident Report, also referred to as a Postmortem](https://alx-intranet.hbtn.io/rltoken/vkEjk-M6yBWW-wyB-7-I9Q "Incident Report, also referred to as a Postmortem")
-- [How to run a Postmortem](https://alx-intranet.hbtn.io/rltoken/pzE_VO7Bfe49K_MhkOyzdQ "How to run a Postmortem")
+6:00 pm: Received a message on iMac that my machine must be rebooted. No one else seems to have this message.
 
-More Info
----------
+6:20 pm: Told Larry about keeping Time Zone setting as UTC. Walked Larry through Sumo Logic installation in 10 minutes also. Life is absurd.
 
-### Manual QA Review
+6:45 pm: Signed up for Sumo Logic’s Slack channel as last-ditch effort to get Advanced portion of project working. Even signing up for the Slack channel was a hassle (required separate password). [Update: A Sumo Logic employee from Australia answered my post at midnight, but I was too tired].
 
-**It is your responsibility to request a review for your postmortem from a peer before the project's deadline. If no peers have been reviewed, you should request a review from a TA or staff member.**
+7:00 pm: Could not find the elusive Gremlins. Will need to install cameras around my station.
 
-Tasks
------
+ROOT CAUSE AND RESOLUTION:
+-Guessing the Private Key was erased on the 2nd installation attempt
+-If Sumo Logic installation is interrupted (Internet or screen locked), disaster strikes. 
+-Sumo Logic GUI is buggy
+-Don't ever upgrade to a new MacOS before this project. Computer settings need to be preserved, and Vagrant must be backed up. Screensaver time should be kept at previous setting.
+-Suspect High Sierra might have some issues (2 reboots were needed)
+-Sumo Logic’s non-use of remote login tool, like LogMeIn, delayed troubleshooting.
+-Asking for mercy on the grading since I’ve helped 2 other installations + Advanced.
 
-### 0\. My first postmortem
+CORRECTIVE AND PREVENTATIVE MEASURES:
+-Sumo Logic to handle graceful recovery if installation of Free version is Interrupted
+-Sumo Logic to provide explanation of Installation Process and where to find help.
+-Sumo Logic Customer Support was great, but wished it wasn’t necessary.
+-Perhaps consider an alternative to Sumo Logic.
+-Next time, I should have quit earlier and worked on my Final Project.
+-Under pain of death, do not start Sumo Logic install unless I have an hour to babysit the tool.
+-Archive vagrants on all the machines before reimaging iMacs.
+-Need to buy Gremlin repellent.
+-Build a bar in the kitchen area. Cheers to that! (clink)
+-We are also suffering from extreme chocolate deprivation. Emergency French chocolate must be airlifted ASAP.
+-I'm considering writing a novel because this is a touchingly sad and eloquent story, worthy of the Blarney Stone.
+-[Update 1/25/18 5:08 am, After Andrew told me about the uninstall command and re-installed, it now works].
 
-mandatory
-
-[![](https://s3.amazonaws.com/intranet-projects-files/holbertonschool-sysadmin_devops/294/pQ9YzVY.gif)](https://twitter.com/devopsreact/status/834887829486399488)
-
-Using one of the web stack debugging project issue or an outage you have personally face, write a postmortem. Most of you will never have faced an outage, so just get creative and invent your own :)
-
-Requirements:
-
-- Issue Summary (that is often what executives will read) must contain:
-  - duration of the outage with start and end times (including timezone)
-  - what was the impact (what service was down/slow? What were user experiencing? How many % of the users were affected?)
-  - what was the root cause
-- Timeline (format bullet point, format: `time` - `keep it short, 1 or 2 sentences`) must contain:
-
-  - when was the issue detected
-  - how was the issue detected (monitoring alert, an engineer noticed something, a customer complained...)
-  - actions taken (what parts of the system were investigated, what were the assumption on the root cause of the issue)
-  - misleading investigation/debugging paths that were taken
-  - which team/individuals was the incident escalated to
-  - how the incident was resolved
-- Root cause and resolution must contain:
-
-  - explain in detail what was causing the issue
-  - explain in detail how the issue was fixed
-- Corrective and preventative measures must contain:
-
-  - what are the things that can be improved/fixed (broadly speaking)
-  - a list of tasks to address the issue (be very specific, like a TODO, example: patch Nginx server, add monitoring on server memory...)
-- Be brief and straight to the point, between 400 to 600 words
-
-While postmortem format can vary, stick to this one so that you can get properly reviewed by your peers.
-
-Please, remember that these blogs must be written in English to further your technical ability in a variety of settings.
-
-#### Add URLs here
-
-Save
-
-<https://docs.google.com/document/d/1beyDFpjU8GusqktPl5HFL5w0QDX9o_EshMMz79TovKc/edit?usp=sharing>
-
-```
-SOLUTION
-
-Title: DevOps Incident Postmortem: Docker Container Outage
-
-Issue Summary:
-Duration: 2 hours, from 2023-05-11 14:00 UTC to 2023-05-11 16:00 UTC.
-Impact: The containerized service "NdechSystemz" experienced a complete outage during the incident. Users were unable to access the service, resulting in a 100% service disruption. User experience was severely affected, with all users unable to perform any actions within the application.
-
-Timeline:
-
-2023-05-11 14:00 UTC: The issue was detected when the monitoring system triggered an alert for the unavailability of the "NdechSystemz" service.
-Investigation began immediately after receiving the alert.
-
-Initially, the investigation focused on network connectivity issues and Docker host health checks as possible root causes.
-
-Misleading investigation paths included examining the load balancer configuration and checking for any issues with external dependencies.
-
-The incident was escalated to the DevOps team lead and the system architect for further assistance.
-
-Additional debugging efforts were undertaken, including reviewing container logs and resource allocation.
-Root Cause and Resolution:
-Root Cause: The root cause of the outage was identified as a misconfiguration in the container orchestration platform. A recent update to the platform introduced a configuration change that caused service containers to fail during startup.
-
-Resolution: To resolve the issue, the DevOps team rolled back the recent configuration change, reverting the container orchestration platform to its previous stable version. Once rolled back, the service containers started successfully, and the application was restored to full functionality.
-
-Corrective and Preventative Measures:
-Improvements/Fixes:
-
-Enhance monitoring capabilities to include detailed health checks and alerts specifically for container startup failures.
-Implement stricter testing and validation processes for container orchestration platform updates to catch potential configuration issues before deployment.
-Establish clear communication channels and escalation paths within the team to ensure timely incident response.
-
-Tasks:
-
-Update monitoring system to include container startup checks for critical services.
-Review and enhance testing procedures for future container orchestration platform updates.
-
-Conduct a post-incident review meeting with the team to identify lessons learned and document best practices.
-Develop a comprehensive incident response plan, including clear roles and responsibilities for each team member.
-
-In conclusion, the Docker container outage was caused by a misconfiguration introduced during a recent update to the container orchestration platform. The incident was promptly detected by the monitoring system, and investigation efforts were initiated. Misleading paths were explored before identifying the root cause. The incident was escalated to higher levels, and a rollback of the configuration change resolved the issue. To prevent similar incidents in the future, monitoring capabilities will be enhanced, testing procedures will be strengthened, and a comprehensive incident response plan will be developed and implemented.
-
-By following these corrective measures, we aim to improve the stability and reliability of our containerized services, ensuring uninterrupted access for our users.
-```
-
-**Repo:**
-
-- GitHub repository: `alx-system_engineering-devops`
-- Directory: `0x19-postmortem`
-- File: `README.md`
-
- Done! Help
-
-### 1\. Make people want to read your postmortem
-
-# advanced
-
-We are constantly stormed by a quantity of information, it's tough to get people to read you.
-
-Make your post-mortem attractive by adding humour, a pretty diagram or anything that would catch your audience attention.
-
-Please, remember that these blogs must be written in English to further your technical ability in a variety of settings.
-
-#### Add URLs here
-
-<https://docs.google.com/document/d/1beyDFpjU8GusqktPl5HFL5w0QDX9o_EshMMz79TovKc/edit?usp=sharing>
-
-**Repo:**
-
-- GitHub repository: `alx-system_engineering-devops`
-- Directory: `0x19-postmortem`
-- File: `README.md`
+¯\_(ツ)_/¯
