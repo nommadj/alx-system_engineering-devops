@@ -1,32 +1,20 @@
 #!/usr/bin/python3
-"""For a given employee ID, returns TODO list info as CSV format"""
+''' export data to CSV file given the ID '''
+
+import csv
+import requests
+import sys
+
 if __name__ == "__main__":
-    """ __main__ """
-
-    import csv
-    import sys
-    import requests
-
-    if len(sys.argv) != 2:
-        exit(1)
-
-    url = 'https://jsonplaceholder.typicode.com/'
-    empID = sys.argv[1]
-
-    urlUser = url + 'users/' + empID
-    urlTodos = url + 'todos?userId=' + empID
-
-    user = requests.get(urlUser).json()
-    todos = requests.get(urlTodos).json()
-
-    if (len(user) == 0):
-        exit(1)
-
+    # limit importation
+    userId = sys.argv[1]
+    url = "https://jsonplaceholder.typicode.com/"
+    user = requests.get(url + "users/{}".format(userId)).json()
     username = user.get("username")
+    todos = requests.get(url + "todos", params={"userId": userId}).json()
 
-    fp = empID + ".csv"
-    with open(fp, "w") as csvFile:
-        csvWriter = csv.writer(csvFile, quoting=csv.QUOTE_ALL)
-        for todo in todos:
-            csvWriter.writerow(
-                [empID, username, todo.get("completed"), todo.get("title")])
+    with open("{}.csv".format(userId), "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        [writer.writerow(
+            [userId, username, t.get("completed"), t.get("title")]
+            ) for t in todos]
